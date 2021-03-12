@@ -19,7 +19,7 @@ c10 = (change % l[0]) // l[1]
 c5  = (change % l[0] % l[1]) // l[2]
 c1  = (change % l[0] % l[1] % l[2]) // l[3]
 
-print("50 * ", c50 )
-print("10 * ", c10 )
-print("5 * ", c5 )
-print("1* ", c1 )
+print( l[0], "*", c50 )
+print( l[1], "*", c10 )
+print( l[2], "*", c5 )
+print( l[3], "*", c1 )
