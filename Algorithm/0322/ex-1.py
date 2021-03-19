@@ -17,11 +17,11 @@ def initPop():             # 初始化群體
 	return np.random.uniform(low=-500, high=500, size=(NUM_CHROME,NUM_BIT)) 
 
 def fitFunc(x):            # 適應度函數
-    #n = 0
-    return ((-x[0]) * math.sin(math.sqrt(abs(x[0]))))
-    #for i in range(30):
-    #    n += ((-x[i]) * math.sin(math.sqrt(abs(x[i]))))
-    #return n*/
+    n = [0]
+    #return ((-x[0]) * math.sin(math.sqrt(abs(x[0]))))
+    for i in range(30):
+        n[0] -= ((x[0]) * math.sin(math.sqrt(abs(x[0]))))
+    return n[0]
 
 def evaluatePop(p):        # 評估群體之適應度
     return [fitFunc(p[i]) for i in range(len(p))]
