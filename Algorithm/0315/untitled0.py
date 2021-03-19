@@ -8,4 +8,3 @@ for i in range(4):
     s += ((A[i] & M[i]) - (B[i] & M[i]))
     
 print(s)
-
