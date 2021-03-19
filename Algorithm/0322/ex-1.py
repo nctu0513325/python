@@ -6,7 +6,7 @@ import math
 NUM_ITERATION = 100			# 世代數(迴圈數)
 
 NUM_CHROME = 20             # 染色體個數
-NUM_BIT = 2                 # 染色體長度
+NUM_BIT = 30                 # 染色體長度
 SIGMA = 0.2                 # 生成子代時用到的干擾
 
 np.random.seed(0)          # 若要每次跑得都不一樣的結果，就把這行註解掉
@@ -17,11 +17,11 @@ def initPop():             # 初始化群體
 	return np.random.uniform(low=-500, high=500, size=(NUM_CHROME,NUM_BIT)) 
 
 def fitFunc(x):            # 適應度函數
-    n = [0]
+    n = 0
     #return ((-x[0]) * math.sin(math.sqrt(abs(x[0]))))
     for i in range(30):
-        n[0] -= ((x[0]) * math.sin(math.sqrt(abs(x[0]))))
-    return n[0]
+        n += -((x[0]) * math.sin(math.sqrt(abs(x[0]))))
+    return n
 
 def evaluatePop(p):        # 評估群體之適應度
     return [fitFunc(p[i]) for i in range(len(p))]
@@ -59,6 +59,6 @@ for i in range(NUM_ITERATION) :
     pop, pop_fit = replace(pop, pop_fit, kid, kid_fit)    # 取代
 
     bestIndex = np.argmax(pop_fit)              # 找此世代最佳解的索引值
-    print('iteration %d: x = %s, y = %f'	%(i, pop[bestIndex], pop_fit[bestIndex]))
+    print('iteration %d:  y = %f'	%(i, pop_fit[bestIndex]))
 
     
