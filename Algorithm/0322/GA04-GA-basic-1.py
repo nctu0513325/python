@@ -17,8 +17,7 @@ def initPop():             # 初始化群體
 	return np.random.uniform(low=-100, high=100, size=(NUM_CHROME,NUM_BIT)) 
 
 def fitFunc(x):            # 適應度函數
-    return 0.5 + ((math.sin(math.hypot(x[0], x[1])))**2 - 0.5) \
-           / (1.0 + 0.001 * ( x[0]**2 + x[1]**2 ) )**2
+    return 0.5 + ((math.sin(math.hypot(x[0], x[1])))**2 - 0.5) / (1.0 + 0.001 * ( x[0]**2 + x[1]**2 ) )**2
 
 def evaluatePop(p):        # 評估群體之適應度
     return [fitFunc(p[i]) for i in range(len(p))]
@@ -47,11 +46,6 @@ def replace(p, p_fit, k, k_fit):            # 適者生存
 
 # ==== 主程式 ====
 pop = initPop()             # 初始化 pop
-print (pop)
-print("change")
-print(pop[1][0])
-print(pop[0][0])
-
 pop_fit = evaluatePop(pop)  # 算 pop 的 fit
 
 for i in range(NUM_ITERATION) :

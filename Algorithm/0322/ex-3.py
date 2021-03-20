@@ -6,7 +6,7 @@ import math
 NUM_ITERATION = 4000		# 世代數(迴圈數)
 
 NUM_CHROME = 20             # 染色體個數
-NUM_BIT = 1                # 染色體長度
+NUM_BIT = 30                # 染色體長度
 SIGMA = 0.2                 # 生成子代時用到的干擾
 
 np.random.seed(0)          # 若要每次跑得都不一樣的結果，就把這行註解掉
@@ -21,8 +21,8 @@ def fitFunc(x):            # 適應度函數 x[i] ** 2 - 10 * math.cos(2 * math.
     m = 0
     y = 0
     for i in range(NUM_BIT):
-        n += x[0] ** 2 
-        m += math.cos(2 * math.pi * x[0])
+        n += x[i] ** 2 
+        m += math.cos(2 * math.pi * x[i])
     y = -20 * math.exp(-0.2 * math.sqrt( n / NUM_BIT)) - math.exp(m / NUM_BIT) + 20 +math.exp(1)
     return y   
 
@@ -65,6 +65,6 @@ for i in range(NUM_ITERATION) :
     pop, pop_fit = replace(pop, pop_fit, kid, kid_fit)    # 取代
 
     bestIndex = np.argmin(pop_fit)              # 找此世代最佳解的索引值
-print('iteration %d:  y = %f'	%(i + 1, -pop_fit[bestIndex]))
+print('iteration %d:  y = %f'	%(i + 1, pop_fit[bestIndex]))
 
     

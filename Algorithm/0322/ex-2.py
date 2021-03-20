@@ -19,7 +19,7 @@ def initPop():             # 初始化群體
 def fitFunc(x):            # 適應度函數 x[i] ** 2 - 10 * math.cos(2 * math.pi * x[i]) + 10
     n = 0
     for i in range(NUM_BIT):
-        n += x[0] ** 2 - 10 * math.cos(2 * math.pi * x[0]) + 10
+        n += x[i] ** 2 - 10 * math.cos(2 * math.pi * x[i]) + 10
     return n   
 
 def evaluatePop(p):        # 評估群體之適應度
@@ -49,10 +49,8 @@ def replace(p, p_fit, k, k_fit):            # 適者生存
 
 # ==== 主程式 ====
 pop = initPop()             # 初始化 pop
-print(len(pop))
-
 pop_fit = evaluatePop(pop)  # 算 pop 的 fit
-
+print(pop_fit)
 
 for i in range(NUM_ITERATION) :
     parent = selection(pop)                     # 挑父母
@@ -61,6 +59,6 @@ for i in range(NUM_ITERATION) :
     pop, pop_fit = replace(pop, pop_fit, kid, kid_fit)    # 取代
 
     bestIndex = np.argmin(pop_fit)              # 找此世代最佳解的索引值
-print('iteration %d:  y = %f'	%(i + 1, -pop_fit[bestIndex]))
+print('iteration %d:  y = %f'	%(i + 1, pop_fit[bestIndex]))
 
     

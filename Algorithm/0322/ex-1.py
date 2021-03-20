@@ -6,7 +6,7 @@ import math
 NUM_ITERATION = 4000		# 世代數(迴圈數)
 
 NUM_CHROME = 20             # 染色體個數
-NUM_BIT = 30                # 染色體長度
+NUM_BIT = 30                 # 染色體長度
 SIGMA = 0.2                 # 生成子代時用到的干擾
 
 np.random.seed(0)          # 若要每次跑得都不一樣的結果，就把這行註解掉
@@ -19,7 +19,7 @@ def initPop():             # 初始化群體
 def fitFunc(x):            # 適應度函數
     n = 0
     for i in range(len(x)):
-        n += (x[0]) * math.sin(math.sqrt(abs(x[0])))        
+        n += - (x[i]) * math.sin(math.sqrt(abs(x[i])))        
     return n   
 
 def evaluatePop(p):        # 評估群體之適應度
@@ -51,7 +51,6 @@ def replace(p, p_fit, k, k_fit):            # 適者生存
 pop = initPop()             # 初始化 pop
 pop_fit = evaluatePop(pop)  # 算 pop 的 fit
 
-
 for i in range(NUM_ITERATION) :
     parent = selection(pop)                     # 挑父母
     kid = reproduction(parent)                  # 生子
@@ -60,5 +59,6 @@ for i in range(NUM_ITERATION) :
     
     bestIndex = np.argmin(pop_fit)              # 找此世代最佳解的索引值
 print('iteration %d:  y = %f'	%(i + 1, pop_fit[bestIndex]))
+
 
     
