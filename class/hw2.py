@@ -4,4 +4,6 @@ temp = L[0:3]
 L[0:3] = L[3:]
 L[3:] = temp
 
+
 print(L)
+
