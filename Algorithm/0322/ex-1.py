@@ -3,7 +3,7 @@ import math
 
 # ==== 參數設定(與演算法相關) ====
 
-NUM_ITERATION = 100			# 世代數(迴圈數)
+NUM_ITERATION = 100		# 世代數(迴圈數)
 
 NUM_CHROME = 20             # 染色體個數
 NUM_BIT = 2                 # 染色體長度
@@ -17,7 +17,7 @@ def initPop():             # 初始化群體
 	return np.random.uniform(low=-500, high=500, size=(NUM_CHROME,NUM_BIT)) 
 
 def fitFunc(x):            # 適應度函數
-    #n = 0
+    n = [0]
     return ((-x[0]) * math.sin(math.sqrt(abs(x[0]))))
     #for i in range(30):
     #    n += ((-x[i]) * math.sin(math.sqrt(abs(x[i]))))
