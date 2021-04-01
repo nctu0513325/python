@@ -50,7 +50,6 @@ def replace(p, p_fit, k, k_fit):            # 適者生存
 # ==== 主程式 ====
 pop = initPop()             # 初始化 pop
 pop_fit = evaluatePop(pop)  # 算 pop 的 fit
-print(pop_fit)
 
 for i in range(NUM_ITERATION) :
     parent = selection(pop)                     # 挑父母

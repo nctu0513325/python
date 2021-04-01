@@ -6,7 +6,7 @@ import math
 NUM_ITERATION = 4000		# 世代數(迴圈數)
 
 NUM_CHROME = 20             # 染色體個數
-NUM_BIT = 30                # 染色體長度
+NUM_BIT = 1                # 染色體長度
 SIGMA = 0.2                 # 生成子代時用到的干擾
 
 np.random.seed(0)          # 若要每次跑得都不一樣的結果，就把這行註解掉
