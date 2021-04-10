@@ -27,18 +27,24 @@ def initPop():             # 初始化群體
 
 def constraint(x):
     n = 0
-   for i in range(0, len(x), 3):
-       if x[i] + x[i+1] +x[i+2]:
+    for i in range(0, len(x), 3):
+       if ((x[i] + x[i+1] +x[i+2]) > 1):
            n = n+1
     i = 0
     for i in range(3):
-        if x[i] + x[i+3] + x[i+6] != 1:
+        if ((x[i] + x[i+3] + x[i+6]) != 1):
             n = n+1
+    return n
+
+def function(x):
+    return 10*x[0] + 9*x[1] + 13*x[2] + 14*x[3] + 12*x[4] + 11*x[5] + 12*x[6] + 15*x[7] + 16*x[8]
+
 
 def fitFunc(x):            # 適應度函數
-    fitness = int("".join(str(i) for i in x[1:NUM_BIT]), 2) # 將[1, 2, ..., NUM_BIT-1]的二元數轉成整數(第0數是符號數)
+    n = constraint(x)
+    f = function(x)
             
-    return 1024 - fitness * fitness
+    return f - 10000*n
 
 def evaluatePop(p):        # 評估群體之適應度
     return [fitFunc(p[i]) for i in range(len(p))]
