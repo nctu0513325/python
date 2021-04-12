@@ -6,7 +6,7 @@ import numpy as np
 
 # ==== 參數設定(與演算法相關) ====
 
-NUM_ITERATION = 20			# 世代數(迴圈數)
+NUM_ITERATION = 4000			# 世代數(迴圈數)
 
 NUM_CHROME = 20				# 染色體個數 (一定要偶數)
 NUM_BIT = 9 					# 染色體長度
@@ -107,8 +107,10 @@ best_outputs.append(np.max(pop_fit))        # 存下初始群體的最佳解 (ne
 
 mean_outputs = []                           # 用此變數來紀錄每一個迴圈的平均解 (new)
 mean_outputs.append(np.average(pop_fit))        # 存下初始群體的最佳解 (new)
+i =  0
 
 for i in range(NUM_ITERATION) :
+    
     parent = selection(pop, pop_fit)            # 挑父母
     offspring = crossover(parent)               # 交配
     mutation(offspring)                         # 突變
@@ -118,7 +120,7 @@ for i in range(NUM_ITERATION) :
     best_outputs.append(np.max(pop_fit))        # 存下這次的最佳解 (new)
     mean_outputs.append(np.average(pop_fit))    # 存下這次的平均解 (new)
 
-    print('iteration %d: x = %s, y = %d'	%(i, pop[0], pop_fit[0]))
+print('iteration %d: x = %s, y = %d'	%(i, pop[0], pop_fit[0]))
     
 
 # 畫圖 (new)
