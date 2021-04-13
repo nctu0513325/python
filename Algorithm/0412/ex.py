@@ -6,7 +6,7 @@ import numpy as np
 
 # ==== 參數設定(與演算法相關) ====
 
-NUM_ITERATION = 4000			# 世代數(迴圈數)
+NUM_ITERATION = 20			# 世代數(迴圈數)
 
 NUM_CHROME = 20				# 染色體個數 (一定要偶數)
 NUM_BIT = 9 					# 染色體長度
@@ -44,13 +44,14 @@ def fitFunc(x):            # 適應度函數
     n = constraint(x)
     f = function(x)
             
-    return f - 10000*n
+    return 1/(f + 10000*n)
 
 def evaluatePop(p):        # 評估群體之適應度
     return [fitFunc(p[i]) for i in range(len(p))]
 
 def selection(p, p_fit):   # 用二元競爭式選擇法來挑父母
 	a = []
+
 
 	for i in range(NUM_PARENT):
 		[j, k] = np.random.choice(NUM_CHROME, 2, replace=False)  # 任選兩個index
@@ -120,7 +121,7 @@ for i in range(NUM_ITERATION) :
     best_outputs.append(np.max(pop_fit))        # 存下這次的最佳解 (new)
     mean_outputs.append(np.average(pop_fit))    # 存下這次的平均解 (new)
 
-print('iteration %d: x = %s, y = %d'	%(i, pop[0], pop_fit[0]))
+print('iteration %d: x = %s, y = %f'	%(i, pop[0], pop_fit[0]))
     
 
 # 畫圖 (new)
