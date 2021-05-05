@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "r09546021_賴春匠_Final_Project", "r09546021_賴春匠_Final_Project\r09546021_賴春匠_Final_Project.csproj", "{20C5000E-FE54-4E70-8F21-A910F4003BDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Debug|x64.ActiveCfg = Debug|x64
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Debug|x64.Build.0 = Debug|x64
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Release|x64.ActiveCfg = Release|x64
+		{20C5000E-FE54-4E70-8F21-A910F4003BDA}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54F7180F-FCC0-4C95-B218-F4D971F8DB79}
+	EndGlobalSection
+EndGlobal

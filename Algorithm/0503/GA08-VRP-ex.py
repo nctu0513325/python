@@ -61,11 +61,11 @@ NUM_VEHICLE = 4                        # ==== Step 1-3. 設定車輛個數 ====
 
 NUM_ITERATION = 60			# 世代數(迴圈數)
 
-NUM_CHROME = 200				   # 染色體個數#
+NUM_CHROME = 500				   # 染色體個數#
 NUM_BIT = NUM_CITY				# 染色體長度    # ==== Step 1-4. 設定bit個數 ====
 
 Pc = 0.7    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
-Pm = 0.2   					# 突變率 (代表共要執行Pm*NUM_CHROME*NUM_BIT次突變)
+Pm = 0.3   					# 突變率 (代表共要執行Pm*NUM_CHROME*NUM_BIT次突變)
 
 NUM_PARENT = NUM_CHROME                         # 父母的個數
 NUM_CROSSOVER = int(Pc * NUM_CHROME / 2)        # 交配的次數
@@ -84,7 +84,7 @@ def initPop():             # 初始化群體
         p1.append(np.random.permutation(range(1,NUM_CITY+1)))    # Type code here
         
         # ==== Step 2-2. 產生 2 * NUM_VEHICLE 個(x,y) 隨機座標 ====
-        p2.append(np.random.randint(900, size=(2 * NUM_CITY)))    # Type code here        
+        p2.append(np.random.randint(900, size=(2 * NUM_VEHICLE)))    # Type code here        
     return p1, p2
 
 def fitFunc(x1, x2):       # 適應度函數    # ==== Step 3. 改適應度函數 ====
