@@ -67,10 +67,13 @@ for f in range(len(FileName)):
             y = np.pad(y, (0,x), 'constant', constant_values=(0,-1))    #塞入-1當作作業停止
             np.random.shuffle(y)                                        #打亂順序
             y = y.reshape((Num_of_Machine, Num_of_Job))
-            print("y before List_order=", y)
             for j in range(len(y)):
                 Dataread.list_order(y[j])
             pop.append(y)
-            print("y after List_order=", y)
-            
+        return pop
+    #適應度函數
+    def fitfunction(x):
+        time = np.zeros(Num_of_Machine)
+        
+        
     init_pop()
