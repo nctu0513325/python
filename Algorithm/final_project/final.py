@@ -4,14 +4,14 @@ import numpy as np
 import Dataread
 
 #先載入標竿問題
-FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 #將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
     #載入標竿問題
     instance = (FileName[f])
     
     with open("Instence/" + instance) as ins:
-        #載入數據
+        #==============載入資料================
         data = ins.readlines()          #txt檔里全部數據        
         NUM = data[0].split()
         Num_of_Job = int(NUM[0])         #紀錄JOB數
@@ -40,11 +40,15 @@ for f in range(len(FileName)):
             for k in range(Num_of_Job):
                 Setup_Time[i][j-(4+Num_of_Job)-Num_of_Job*i-i][k] = item[k]
             x = x + 1
-    #資料載入完畢
+        print("set_up time= " , Setup_Time)
+        print("process time =", Proc_Time)
+    #===========資料載入完畢==========
 
     #參數設定
     Num_of_Machine                #機台個數
     Num_of_Job                    #JOB數
+    Proc_Time                       
+    Setup_Time                     
     iteration = 200                  #迴圈個數
     NUM_CHROME = 3                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
@@ -74,6 +78,18 @@ for f in range(len(FileName)):
     #適應度函數
     def fitfunction(x):
         time = np.zeros(Num_of_Machine)
-        
-        
-    init_pop()
+        for i in range(len(x)):
+            for j in range(Num_of_Job):
+                if (x[i][j] != -1):
+                    if (j != 0):
+                        time[i] += Setup_Time[i][x[i][j-1]][x[i][j]]
+                    time[i] += Proc_Time[x[i][j]][i]
+        return -np.amax(time)
+    #評估群體適應度
+    def evaluatePop(x):
+        return [fitFunc(p[i]) for i in range(len(p))]
+    #利用二元式
+    #主程式
+    pop = init_pop()
+    print("pop[0]= ", pop[0])
+    fitfunction(pop[0])
