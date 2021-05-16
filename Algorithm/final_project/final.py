@@ -59,6 +59,7 @@ for f in range(len(FileName)):
     NUM_CROSSOVER_2 = 1 #NUM_CROSSOVER*2               # 上數的兩倍
     NUM_MUTATION = int(Pm * NUM_CHROME * NUM_BIT)   # 突變的次數
     #np.random.seed(0)
+    
     #==========GA相關函數==========
     #初始化群體
     def init_pop():
@@ -149,6 +150,7 @@ for f in range(len(FileName)):
         b, b_fit = sortChrome(b, b_fit)                 # b 和 b_fit 連動的排序
         
         return b[:NUM_CHROME], list(b_fit[:NUM_CHROME]) # 回傳 NUM_CHROME 個為新的一個世代
+    
     #==========主程式==========
     pop = init_pop()
     pop_fit = evaluatePop(pop)
