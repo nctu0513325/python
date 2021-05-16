@@ -73,7 +73,6 @@ def selection(p, p_fit):   # 用二元競爭式選擇法來挑父母
 			a.append(p[j].copy())
 		else:
 			a.append(p[k].copy())
-	print("a=", a)
 	return a
 
 def crossover_uniform(p):           # 用均勻交配來繁衍子代 (new)

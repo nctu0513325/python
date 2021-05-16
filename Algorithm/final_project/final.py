@@ -2,9 +2,11 @@ import os
 import re
 import numpy as np
 import other_func as of
+import csv
 
 # 先載入標竿問題
 FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
     #載入標竿問題
@@ -174,3 +176,18 @@ for f in range(len(FileName)):
         best_output.append(np.max(pop_fit))
         mean_output.append(np.average(pop_fit))
     print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
+    
+    # 將此標竿問題結果存起來 格式==>[標竿問題名稱, 機台數, 任務數, 解]
+    the_result = [ instance, Num_of_Machine, Num_of_Job, -pop_fit[0]]
+    result.append(the_result)
+
+# ==========將結果輸出為csv檔案==========
+with open('result.csv', 'w', newline='') as csvfile:
+    # 建立 CSV 檔寫入器
+    writer = csv.writer(csvfile)
+
+    # 寫入資料
+    writer.writerow(['標竿問題', '機台數', '任務數', '最佳解'])
+    
+    for i in range(len(result)):
+        writer.writerow(result[i])
