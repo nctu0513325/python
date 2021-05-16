@@ -105,13 +105,12 @@ def crossover_uniform(p):           # 用均勻交配來繁衍子代 (new)
 	return a
 
 def mutation(p):	           # 突變
-	for _ in range(NUM_MUTATION) :
+	for i in range(NUM_MUTATION) :
 		row = np.random.randint(NUM_CROSSOVER_2)  # 任選一個染色體
 		[j, k] = np.random.choice(NUM_BIT, 2, replace=False)  # 任選兩個基因
-      
+		print("j,k=",p)
 		p[row][j], p[row][k] = p[row][k], p[row][j]       # 此染色體的兩基因互換
     
-
 def sortChrome(a, a_fit):	    # a的根據a_fit由大排到小
     a_index = range(len(a))                         # 產生 0, 1, 2, ..., |a|-1 的 list
     
@@ -149,7 +148,7 @@ for i in range(NUM_ITERATION) :
     best_outputs.append(np.max(pop_fit))        # 存下這次的最佳解
     mean_outputs.append(np.average(pop_fit))    # 存下這次的平均解
 
-    print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
+print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
 
 # 畫圖
 import matplotlib.pyplot
