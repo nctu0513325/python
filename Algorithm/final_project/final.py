@@ -3,9 +3,9 @@ import re
 import numpy as np
 import other_func as of
 
-#先載入標竿問題
-FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
-#將FileName裡的資料都跑過一遍
+# 先載入標竿問題
+FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+# 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
     #載入標竿問題
     instance = (FileName[f])
@@ -18,14 +18,14 @@ for f in range(len(FileName)):
         Num_of_Machine = int(NUM[1])     #紀錄machine數
         Proc_Time = np.zeros((Num_of_Job, Num_of_Machine))      #initialize 
         Setup_Time = np.zeros((Num_of_Machine, Num_of_Job, Num_of_Job))      #initialize 
-        #processtime 資料
+        # processtime 資料
         for j in range(2,Num_of_Job + 2):                        
             data[j] = re.sub('\n', '',data[j])                  #process time資料
             item = []
             item = data[j].split('\t')
             for k in range(2, len(item), 2): 
                 Proc_Time[j-2][((k-2)//2)] = item[k]
-        #儲存set_up_time
+        # set_up_time
         i = 0                               #number of machine
         x = 0
         for j in range(4+Num_of_Job,len(data)):             #讀取完剩下的資料(set up time)
@@ -34,13 +34,12 @@ for f in range(len(FileName)):
                 i = i + 1
                 continue
             
-            data[j] = re.sub('\n', '',data[j])                  #process time資料
+            data[j] = re.sub('\n', '', data[j])                  #process time資料
             item = []
             item = data[j].split('\t')
             for k in range(Num_of_Job):
                 Setup_Time[i][j-(4+Num_of_Job)-Num_of_Job*i-i][k] = item[k]
             x = x + 1
-
     #===========資料載入完畢==========
 
     #========參數設定========
@@ -48,20 +47,19 @@ for f in range(len(FileName)):
     Num_of_Job                    #JOB數
     Proc_Time                       
     Setup_Time                     
-    iteration = 200                  #迴圈個數
-    NUM_CHROME = 3                     #染色體個數
+    iteration = 20                  #迴圈個數
+    NUM_CHROME = 20                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
-    Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*NUM_BIT次突變)
-    NUM_BIT = Num_of_Job
+    Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     
     NUM_PARENT = NUM_CHROME                         # 父母的個數
     NUM_CROSSOVER = int(Pc * NUM_CHROME / 2)        # 交配的次數
-    NUM_CROSSOVER_2 = 1 #NUM_CROSSOVER*2               # 上數的兩倍
-    NUM_MUTATION = int(Pm * NUM_CHROME * NUM_BIT)   # 突變的次數
+    NUM_CROSSOVER_2 = NUM_CROSSOVER*2               # 上數的兩倍
+    NUM_MUTATION = int(Pm * NUM_CHROME * Num_of_Job)   # 突變的次數
     #np.random.seed(0)
     
     #==========GA相關函數==========
-    #初始化群體
+    # 初始化群體
     def init_pop():
         pop = []
         x = (Num_of_Machine-1)*Num_of_Job
@@ -75,7 +73,7 @@ for f in range(len(FileName)):
             pop.append(y)
         return pop
     
-    #適應度函數
+    # 適應度函數
     def fitfunction(x):
         time = np.zeros(Num_of_Machine)
         for i in range(len(x)):
@@ -86,11 +84,11 @@ for f in range(len(FileName)):
                     time[i] += Proc_Time[x[i][j]][i]
         return -np.amax(time)
     
-    #評估群體適應度
+    # 評估群體適應度
     def evaluatePop(p):
         return [fitfunction(p[i]) for i in range(len(p))]
     
-    #利用二元競爭式選擇法挑父母
+    # 利用二元競爭式選擇法挑父母
     def select(pop, pop_fit):
         a = []
         for i in range(NUM_PARENT):
@@ -104,51 +102,56 @@ for f in range(len(FileName)):
     # 用均勻交配來繁衍子代 (new)
     def crossover_uniform(p):
         a = []
-        for i in range(NUM_CROSSOVER) :
-            mask = np.random.randint(2, size=NUM_BIT)
-            [j, k] = np.random.choice(NUM_PARENT, 2, replace=False)  # 任選兩個index
-            child1, child2 = p[j].copy(), p[k].copy()
-            remain1, remain2 = list(p[j].copy()), list(p[k].copy())
-            for m in range(NUM_BIT):
-                if mask[m] == 1 :
-                    remain2.remove(child1[m])   # 砍掉 remain2 中的值是 child1[m]
-                    remain1.remove(child2[m])   # 砍掉 remain1 中的值是 child2[m]
+        for i in range(NUM_CROSSOVER):
+            #產生mask(決定哪個bit要用哪個parent的)
+            for j in range(Num_of_Machine):
+                for k in range(Num_of_Job):
+                    mask = np.random.randint(2, size = (Num_of_Machine, Num_of_Job))
+            [mom ,dad] = np.random.choice(NUM_PARENT, 2, replace=False)  # 任選兩個index
+            child_1, child_2 = p[mom].copy(), p[dad].copy()
+            remain_1, remain_2 = list(p[mom].copy()), list(p[dad].copy())
+           
+            for m in range(Num_of_Machine):
+                for n in range(Num_of_Job):
+                    if (mask[m][n] == 1):
+                        list(remain_1[m]).remove(child_1[m][n])
+                        list(remain_2[m]).remove(child_2[m][n])
+                        
             t = 0
-            for m in range(NUM_BIT):
-                if mask[m] == 0 :
-                    child1[m] = remain2[t]
-                    child2[m] = remain1[t]
-                    t += 1
-                    
-            a.append(child1)
-            a.append(child2)
+            for m in range(Num_of_Machine):
+                for n in range(Num_of_Job):
+                    if (mask[m][n] == 0):
+                        child_1[m][n] = remain_1[m][n]
+                        child_2[m][n] = remain_2[m][n]
+                        t += 1
+                of.list_order(child_1[m])
+                of.list_order(child_2[m])
+            a.append(child_1)
+            a.append(child_2)
         return a
-    #突變
+    
+    # 突變
     def mutation(p):
         for i in range(NUM_MUTATION):
             mut = np.random.randint(NUM_CROSSOVER_2)           #選一組基因出來
             [mut_mach_1, mut_mach_2] = np.random.choice(Num_of_Machine, 2, replace = False)           #選哪兩個機台要突變
             [mut_job_1, mut_job_2] = np.random.choice(Num_of_Job-1, 2, replace = False)             #選兩個job互換
-            print("mut_mach_1, mut_mach_2=",mut_mach_1, mut_mach_2)
-            print("mut_job_1, mut_job_2 = ", mut_job_1, mut_job_2)
             p[mut][mut_mach_1][mut_job_1], p[mut][mut_mach_2][mut_job_2] = \
                 p[mut][mut_mach_2][mut_job_2], p[mut][mut_mach_1][mut_job_1]
             of.list_order(p[mut][mut_mach_1])
             of.list_order(p[mut][mut_mach_2])
             
-    def sortChrome(a, a_fit):	    # a的根據a_fit由大排到小
+    # a的根據a_fit由大排到小
+    def sortChrome(a, a_fit):
         a_index = range(len(a))                         # 產生 0, 1, 2, ..., |a|-1 的 list
-        
         a_fit, a_index = zip(*sorted(zip(a_fit,a_index), reverse=True)) # a_index 根據 a_fit 的大小由大到小連動的排序
-        
         return [a[i] for i in a_index], a_fit           # 根據 a_index 的次序來回傳 a，並把對應的 fit 回傳
     
+    # a的根據a_fit由大排到小
     def replace(p, p_fit, a, a_fit):            # 適者生存
         b = np.concatenate((p,a), axis=0)               # 把本代 p 和子代 a 合併成 b
         b_fit = p_fit + a_fit                           # 把上述兩代的 fitness 合併成 b_fit
-        
         b, b_fit = sortChrome(b, b_fit)                 # b 和 b_fit 連動的排序
-        
         return b[:NUM_CHROME], list(b_fit[:NUM_CHROME]) # 回傳 NUM_CHROME 個為新的一個世代
     
     #==========主程式==========
@@ -164,10 +167,10 @@ for f in range(len(FileName)):
     for i in range(iteration):
         parent = select(pop, pop_fit)
         offspring = crossover_uniform(parent)
-        print("offspring", offspring)
         mutation(offspring)
         offspring_fit = evaluatePop(offspring)
         pop, pop_fit = replace(pop, pop_fit, offspring, offspring_fit)
         
         best_output.append(np.max(pop_fit))
-        mean_oupput.appned(np.average(pop_fit))
+        mean_output.append(np.average(pop_fit))
+    print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的

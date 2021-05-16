@@ -73,7 +73,7 @@ def selection(p, p_fit):   # 用二元競爭式選擇法來挑父母
 			a.append(p[j].copy())
 		else:
 			a.append(p[k].copy())
-
+	print("a=", a)
 	return a
 
 def crossover_uniform(p):           # 用均勻交配來繁衍子代 (new)
@@ -108,7 +108,6 @@ def mutation(p):	           # 突變
 	for i in range(NUM_MUTATION) :
 		row = np.random.randint(NUM_CROSSOVER_2)  # 任選一個染色體
 		[j, k] = np.random.choice(NUM_BIT, 2, replace=False)  # 任選兩個基因
-		print("j,k=",p)
 		p[row][j], p[row][k] = p[row][k], p[row][j]       # 此染色體的兩基因互換
     
 def sortChrome(a, a_fit):	    # a的根據a_fit由大排到小
