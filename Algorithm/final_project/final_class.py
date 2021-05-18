@@ -204,3 +204,9 @@ with open('result_class.csv', 'w', newline='') as csvfile:
     writer.writerow(['標竿問題', '機台數', '任務數', '最佳解', '運算時間'])    
     for i in range(len(result)):
         writer.writerow(result[i])
+    
+    writer.writerow([])
+    writer.writerow([])
+    #紀錄參數
+    writer.writerow(['iteration', 'NUM_CHROME', '交配率', '突變率'])
+    writer.writerow([iteration, NUM_CHROME, Pc, Pm])
