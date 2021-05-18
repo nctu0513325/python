@@ -151,6 +151,7 @@ for f in range(len(FileName)):
     Num_of_Job                    #JOB數
     Proc_Time                       
     Setup_Time                     
+    
     iteration = 20                  #迴圈個數
     NUM_CHROME = 500                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
