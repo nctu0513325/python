@@ -13,7 +13,7 @@ def list_order(y):
     if ( (len(pos_1) != 0) and (len(pos_2) != 0)):        
         while ((max(pos_2)+1) != (min(pos_1))):        
             y[min(pos_1)], y[max(pos_2)] = y[max(pos_2)], y[min(pos_1)]     #將正數位置與負數位置互換
-            pos_1 = [i for i, x in enumerate(y) if x == -1]      #負數位置
+            pos_1 = [i for i, x in enumerate(y) if x == -1]         #負數位置
             pos_2 = [i for i, x in enumerate(y) if x >= 0]          #正數位置
 
 #==========GA相關函數==========
@@ -49,37 +49,61 @@ def evaluatePop(p):
 # N-tournament selection
 def select(pop, pop_fit, Num_pressure):
     a = []
-    a_fit = []
-    fit_select = np.random.choice(NUM_CHROME, Num_pressure, replace = False)
+    a_fit = [-100000000000000]
+    fit_select = np.random.choice(NUM_CHROME, Num_pressure, replace = False)        #依據pressure來選取母代
+    #選出pop-fit最好的當作父母
     for i in range(len(fit_select)):
-        if (pop_fit[i] > a_fit):
-            print('pop_fit[i]=', pop_fit[i])
+        if (pop_fit[fit_select[i]] > a_fit):
             a = pop[i]
             a_fit = pop_fit[i]
-    print('a = ', a)
-    print('a_fit = ', a_fit)
     return a
 
-# local search enhanced
-def local_search_enhanced(pop, pop_fit):
-    a = []
-    parent_1 = []
-    parent_2 = []
-    child_1 = np.zeros((Num_of_Machine, Num_of_Job))
-    child_2 = np.zeros((Num_of_Machine, Num_of_Job))
-    
+# local search - 選子代中會用到
+def local_search(job, child):
+    for i in (len(job)):
+        x = list(child[i]).index(-1)
+        for j in range(len(job[i])):
+            for m in range(x):
+                child[i].insert(m, job[i][j])
+                
+# local search enhanced -選子代方式
+def local_search_enhanced(pop, pop_fit, Num_pressure):
+    a = []    
     for i in range(NUM_CROSSOVER):
-        parent_1 = select(pop, pop_fit)
-        parent_2 = select(pop, pop_fit)
-        print("paren_1 = ", parent_1)
+        child_1 = list(np.zeros((Num_of_Machine, Num_of_Job)) - 1)
+        child_2 = list(np.zeros((Num_of_Machine, Num_of_Job)) - 1)
+        parent_1 = select(pop, pop_fit, Num_pressure)
+        parent_2 = select(pop, pop_fit, Num_pressure)
+        print("parent_1 = ", parent_1)
         
+        #決定child_1
         for j in range(len(parent_1)):
-            x = parent_1[j].index(-1)             #找出-1的位置
-            place = np.random.randint(0, x)       #切割位置
-            a.append(parent_1[:place])
+            x = list(parent_1[j]).index(-1)             #找出首個-1的位置
+            print('x=' ,x)
+            if (x != 0):
+                place = int(np.random.randint(0, x))             #隨機決定切割位置
+            else:
+                place = 0
+            print('place=', place)
+            print('parent=',parent_1[j][:place+1])
+            child_1[j][:place+1] = parent_1[j][:place +1]
+            child_2[j][:x-place-1] = parent_1[j][place + 1 :x]
+        print('child_1', child_1)
+        print('child_2', child_2)
         
+        #將parent_2中相應機台不重複工作塞入作業序列中
+        for j in range(len(parent_2)):
+            x = []
+            y = []
+            #檢查相對應機台有哪些工作沒有的
+            for m in range(len(parent_2[j])):
+                if (parent_2[j][m] not in child_1[j]):
+                    x.append(parent_2[j][m])
+                if (parent_2[j][m] not in child_2[j]):
+                    y.append(parent_2[j][m])
+            #嘗試將工作塞入child中並檢查如何可使完工時間最小
+            child_1 = local_search(x, child_1)
         print(a)
-        
     return a
 
 # 突變
@@ -152,7 +176,7 @@ for f in range(len(FileName)):
     Proc_Time                       
     Setup_Time                     
     
-    iteration = 20                  #迴圈個數
+    iteration = 5                  #迴圈個數
     NUM_CHROME = 500                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
     Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
@@ -201,3 +225,8 @@ with open('result.csv', 'w', newline='') as csvfile:
     
     for i in range(len(result)):
         writer.writerow(result[i])
+    writer.writerow([])
+    writer.writerow([])
+    #紀錄參數
+    writer.writerow(['iteration', 'NUM_CHROME', '交配率', '突變率'])
+    writer.writerow([iteration, NUM_CHROME, Pc, Pm])
