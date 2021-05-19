@@ -1,4 +1,3 @@
-# 答案 y = 11
 import numpy as np
 
 # ==== 參數設定(與問題相關) ====
@@ -64,7 +63,7 @@ NUM_CHROME = 1500				# 染色體個數
 NUM_BIT = NUM_JOB * NUM_MACHINE		   # 染色體長度 # === Step 3-1. 編碼是 000111222 的排列 ===
 
 Pc = 0.7    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
-Pm = 0.2   					# 突變率 (代表共要執行Pm*NUM_CHROME*NUM_BIT次突變)
+Pm = 0.001   					# 突變率 (代表共要執行Pm*NUM_CHROME*NUM_BIT次突變)
 
 NUM_PARENT = NUM_CHROME                         # 父母的個數
 NUM_CROSSOVER = int(Pc * NUM_CHROME / 2)        # 交配的次數

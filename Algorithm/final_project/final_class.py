@@ -107,13 +107,15 @@ def sortChrome(a, a_fit):
 
 # a的根據a_fit由大排到小
 def replace(p, p_fit, a, a_fit):            # 適者生存
+    print('a=', a)
+    print('p=', p)
     b = np.concatenate((p,a), axis=0)               # 把本代 p 和子代 a 合併成 b
     b_fit = p_fit + a_fit                           # 把上述兩代的 fitness 合併成 b_fit
     b, b_fit = sortChrome(b, b_fit)                 # b 和 b_fit 連動的排序
     return b[:NUM_CHROME], list(b_fit[:NUM_CHROME]) # 回傳 NUM_CHROME 個為新的一個世代
 
 # 載入標竿問題
-FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
@@ -158,7 +160,7 @@ for f in range(len(FileName)):
     Proc_Time                       
     Setup_Time                     
     iteration = 20                  #迴圈個數
-    NUM_CHROME = 500                     #染色體個數
+    NUM_CHROME = 20                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
     Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     

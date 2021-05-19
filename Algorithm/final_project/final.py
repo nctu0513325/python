@@ -38,8 +38,8 @@ def fitfunction(x):
         for j in range(Num_of_Job):
             if (x[i][j] != -1):
                 if (j != 0):
-                    makesspan[i] += Setup_Time[i][x[i][j-1]][x[i][j]]
-                makesspan[i] += Proc_Time[x[i][j]][i]
+                    makesspan[i] += Setup_Time[i][int(x[i][j-1])][int(x[i][j])]
+                makesspan[i] += Proc_Time[int(x[i][j])][i]
     return -np.amax(makesspan)
 
 # 評估群體適應度
@@ -59,37 +59,51 @@ def select(pop, pop_fit, Num_pressure):
     return a
 
 # local search - 選子代中會用到
-def local_search(job, child):
-    for i in (len(job)):
-        x = list(child[i]).index(-1)
-        for j in range(len(job[i])):
-            for m in range(x):
-                child[i].insert(m, job[i][j])
+def local_search(job, child, mach):
+    for i in range(len(job)):
+        best = -999999999999                    #最佳解
+        best_place = 0                          #最佳解要放哪個位置
+        x = list(child).index(-1)               #第一個-1出現的位置
+        for j in range(x):
+            y = 0
+            child_test = child
+            list(child_test).insert(j, job[i])
+            #測試插入此位置的結果
+            result = 0
+            for m in range(len(child)):
+                if (child[j] != -1):
+                    if (j != 0):
+                        result += Setup_Time[mach][int(child[m-1])][int(child[m])]
+                    result += Proc_Time[int(child[m])][mach]
+            #如果新的解較好則更改位置與結果
+            result = result * -1
+            print('result=', result)
+            if (result > best):
+                best = result
+                best_place = y
+                print("j=", j)
+            y +=1
+        list(child).insert(best_place, job[i])
+    return child
                 
 # local search enhanced -選子代方式
 def local_search_enhanced(pop, pop_fit, Num_pressure):
     a = []    
     for i in range(NUM_CROSSOVER):
-        child_1 = list(np.zeros((Num_of_Machine, Num_of_Job)) - 1)
-        child_2 = list(np.zeros((Num_of_Machine, Num_of_Job)) - 1)
+        child_1 = list(np.ones((Num_of_Machine, Num_of_Job)) * -1)
+        child_2 = list(np.ones((Num_of_Machine, Num_of_Job)) * -1)
         parent_1 = select(pop, pop_fit, Num_pressure)
         parent_2 = select(pop, pop_fit, Num_pressure)
-        print("parent_1 = ", parent_1)
-        
+
         #決定child_1
         for j in range(len(parent_1)):
             x = list(parent_1[j]).index(-1)             #找出首個-1的位置
-            print('x=' ,x)
             if (x != 0):
                 place = int(np.random.randint(0, x))             #隨機決定切割位置
             else:
                 place = 0
-            print('place=', place)
-            print('parent=',parent_1[j][:place+1])
-            child_1[j][:place+1] = parent_1[j][:place +1]
-            child_2[j][:x-place-1] = parent_1[j][place + 1 :x]
-        print('child_1', child_1)
-        print('child_2', child_2)
+            child_1[j][:place] = parent_1[j][:place]
+            child_2[j][:x-place] = parent_1[j][place:x]
         
         #將parent_2中相應機台不重複工作塞入作業序列中
         for j in range(len(parent_2)):
@@ -102,8 +116,10 @@ def local_search_enhanced(pop, pop_fit, Num_pressure):
                 if (parent_2[j][m] not in child_2[j]):
                     y.append(parent_2[j][m])
             #嘗試將工作塞入child中並檢查如何可使完工時間最小
-            child_1 = local_search(x, child_1)
-        print(a)
+            child_1[j] = local_search(x, child_1[j], j)
+            child_2[j] = local_search(y, child_2[j], j)            
+        a.append(child_1)
+        a.append(child_2)
     return a
 
 # 突變
@@ -132,7 +148,7 @@ def replace(p, p_fit, a, a_fit):            # 適者生存
 
 # ==========開始實作==========
 # 載入標竿問題
-FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
@@ -176,14 +192,14 @@ for f in range(len(FileName)):
     Proc_Time                       
     Setup_Time                     
     
-    iteration = 5                  #迴圈個數
-    NUM_CHROME = 500                     #染色體個數
+    iteration = 20                  #迴圈個數
+    NUM_CHROME = 20                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
     Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     pressure = 0.5               # N-tourment 參數
     
     NUM_PARENT = NUM_CHROME                         # 父母的個數
-    Num_pressure = int(pressure * NUM_CHROME)
+    Num_pressure = int(pressure * NUM_CHROME)       
     NUM_CROSSOVER = int(Pc * NUM_CHROME / 2)        # 交配的次數
     NUM_CROSSOVER_2 = NUM_CROSSOVER*2               # 上數的兩倍
     NUM_MUTATION = int(Pm * NUM_CHROME * Num_of_Job)   # 突變的次數
