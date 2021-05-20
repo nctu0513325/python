@@ -54,36 +54,42 @@ def select(pop, pop_fit, Num_pressure):
     #選出pop-fit最好的當作父母
     for i in range(len(fit_select)):
         if (pop_fit[fit_select[i]] > a_fit):
-            a = pop[i]
-            a_fit = pop_fit[i]
+            a = pop[fit_select[i]]
+            a_fit = pop_fit[fit_select[i]]
     return a
 
 # local search - 選子代中會用到
 def local_search(job, child, mach):
+    print('job, child, mach=',job, child, mach)
     for i in range(len(job)):
-        best = -999999999999                    #最佳解
+        best = 999999999999                    #最佳解
         best_place = 0                          #最佳解要放哪個位置
-        x = list(child).index(-1)               #第一個-1出現的位置
+        x = list(child).index(-1)+1               #第一個-1出現的位置
         for j in range(x):
-            y = 0
             child_test = child
             list(child_test).insert(j, job[i])
             #測試插入此位置的結果
             result = 0
+            print('j=',j,'job[i]=',job[i],'type=', type(child))
+            print('insert-child=', child)
             for m in range(len(child)):
                 if (child[j] != -1):
                     if (j != 0):
                         result += Setup_Time[mach][int(child[m-1])][int(child[m])]
                     result += Proc_Time[int(child[m])][mach]
             #如果新的解較好則更改位置與結果
-            result = result * -1
             print('result=', result)
-            if (result > best):
-                best = result
-                best_place = y
-                print("j=", j)
-            y +=1
+            if (result < best):
+                if result == 0:
+                    list(child).insert(1, job[i])
+                    print('shit=', child)
+                else:
+                    best = result
+                    best_place = j
+                print("fuck", child)
+        x += 1
         list(child).insert(best_place, job[i])
+        print('child after=', child)
     return child
                 
 # local search enhanced -選子代方式
@@ -99,11 +105,17 @@ def local_search_enhanced(pop, pop_fit, Num_pressure):
         for j in range(len(parent_1)):
             x = list(parent_1[j]).index(-1)             #找出首個-1的位置
             if (x != 0):
-                place = int(np.random.randint(0, x))             #隨機決定切割位置
+                place = int(np.random.randint(1, 5*x) % x)             #隨機決定切割位置
+                print('place=', place)
             else:
                 place = 0
             child_1[j][:place] = parent_1[j][:place]
             child_2[j][:x-place] = parent_1[j][place:x]
+            print('x=', x)
+        print('p1= ', parent_1)
+        print('c1=', child_1)
+        print('c2=', child_2)
+        print('p2= ', parent_2)
         
         #將parent_2中相應機台不重複工作塞入作業序列中
         for j in range(len(parent_2)):
@@ -116,8 +128,11 @@ def local_search_enhanced(pop, pop_fit, Num_pressure):
                 if (parent_2[j][m] not in child_2[j]):
                     y.append(parent_2[j][m])
             #嘗試將工作塞入child中並檢查如何可使完工時間最小
-            child_1[j] = local_search(x, child_1[j], j)
-            child_2[j] = local_search(y, child_2[j], j)            
+            if (len(x) != 0):
+                child_1[j] = local_search(x, child_1[j], j)
+            if (len(y) != 0):
+                child_2[j] = local_search(y, child_2[j], j)
+            
         a.append(child_1)
         a.append(child_2)
     return a
@@ -148,7 +163,7 @@ def replace(p, p_fit, a, a_fit):            # 適者生存
 
 # ==========開始實作==========
 # 載入標竿問題
-FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
@@ -156,7 +171,7 @@ for f in range(len(FileName)):
     instance = (FileName[f])
     #==============載入資料================
     with open("Instence/" + instance) as ins:
-        data = ins.readlines()          #txt檔里全部數據        
+        data = ins.readlines()          #txt檔里全部數據
         NUM = data[0].split()
         Num_of_Job = int(NUM[0])         #紀錄JOB數
         Num_of_Machine = int(NUM[1])     #紀錄machine數
@@ -192,8 +207,8 @@ for f in range(len(FileName)):
     Proc_Time                       
     Setup_Time                     
     
-    iteration = 20                  #迴圈個數
-    NUM_CHROME = 20                     #染色體個數
+    iteration = 5                  #迴圈個數
+    NUM_CHROME = 10                     #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
     Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     pressure = 0.5               # N-tourment 參數
@@ -218,12 +233,12 @@ for f in range(len(FileName)):
     
     for i in range(iteration):
         offspring = local_search_enhanced(pop, pop_fit, Num_pressure)
-        mutation(offspring)
+        #mutation(offspring)
         offspring_fit = evaluatePop(offspring)
         pop, pop_fit = replace(pop, pop_fit, offspring, offspring_fit)
-        
         best_output.append(np.max(pop_fit))
         mean_output.append(np.average(pop_fit))
+        #input()
     print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
     stop = time.process_time()                                      #演算法結束
     
