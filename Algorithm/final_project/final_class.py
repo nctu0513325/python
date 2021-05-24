@@ -36,7 +36,9 @@ def fitfunction(x):
     makespan = np.zeros(Num_of_Machine)
     for i in range(len(x)):
         for j in range(Num_of_Job):
-            if (x[i][j] != -1):
+            if (x[i][j] == -1):
+                break 
+            elif (x[i][j] != -1):
                 if (j != 0):
                     makespan[i] += Setup_Time[i][x[i][j-1]][x[i][j]]
                 makespan[i] += Proc_Time[x[i][j]][i]
@@ -107,8 +109,6 @@ def sortChrome(a, a_fit):
 
 # a的根據a_fit由大排到小
 def replace(p, p_fit, a, a_fit):            # 適者生存
-    print('a=', a)
-    print('p=', p)
     b = np.concatenate((p,a), axis=0)               # 把本代 p 和子代 a 合併成 b
     b_fit = p_fit + a_fit                           # 把上述兩代的 fitness 合併成 b_fit
     b, b_fit = sortChrome(b, b_fit)                 # b 和 b_fit 連動的排序
@@ -128,6 +128,7 @@ for f in range(len(FileName)):
         NUM = data[0].split()
         Num_of_Job = int(NUM[0])         #紀錄JOB數
         Num_of_Machine = int(NUM[1])     #紀錄machine數
+        Known_best = int(NUM[2])
         Proc_Time = np.zeros((Num_of_Job, Num_of_Machine))      #initialize 
         Setup_Time = np.zeros((Num_of_Machine, Num_of_Job, Num_of_Job))      #initialize 
         # processtime 資料
@@ -152,6 +153,7 @@ for f in range(len(FileName)):
             for k in range(Num_of_Job):
                 Setup_Time[i][j-(4+Num_of_Job)-Num_of_Job*i-i][k] = item[k]
             x = x + 1
+        
     #===========資料載入完畢==========
 
     #========參數設定========
@@ -159,15 +161,20 @@ for f in range(len(FileName)):
     Num_of_Job                    #JOB數
     Proc_Time                       
     Setup_Time                     
-    iteration = 20                  #迴圈個數
-    NUM_CHROME = 20                     #染色體個數
+    if (Num_of_Job <50):            #迴圈個數
+        iteration = 300
+    else:
+        iteration = 100
+    NUM_CHROME = 80                    #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
-    Pm = 0.1   					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
+    Pm = 0.5    					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     
     NUM_PARENT = NUM_CHROME                         # 父母的個數
     NUM_CROSSOVER = int(Pc * NUM_CHROME / 2)        # 交配的次數
     NUM_CROSSOVER_2 = NUM_CROSSOVER*2               # 上數的兩倍
     NUM_MUTATION = int(Pm * NUM_CHROME * Num_of_Job)   # 突變的次數
+    
+    best_iteration = 0                          #紀錄多快達到已知最佳解
     #np.random.seed(0)
     
     #==========主程式==========
@@ -190,11 +197,14 @@ for f in range(len(FileName)):
         
         best_output.append(np.max(pop_fit))
         mean_output.append(np.average(pop_fit))
+        
+        if (-pop_fit[0] == Known_best):
+            best_iteration = i
     print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
     stop = time.process_time()                                      #演算法結束
     
-    # 將此標竿問題結果存起來 格式==>[標竿問題名稱, 機台數, 任務數, 解, 運行時間]
-    the_result = [ instance, Num_of_Machine, Num_of_Job, -pop_fit[0], stop-start]
+    # 將此標竿問題結果存起來 格式==>[標竿問題名稱, 機台數, 任務數, 解, 運行時間, 迴圈數, 達到已知最佳解迴圈數]
+    the_result = [ instance, Num_of_Machine, Num_of_Job, -pop_fit[0], stop-start, iteration, Known_best, best_iteration]
     result.append(the_result)
 
 # ==========將結果輸出為csv檔案==========
@@ -203,12 +213,11 @@ with open('result_class.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
 
     # 寫入資料
-    writer.writerow(['標竿問題', '機台數', '任務數', '最佳解', '運算時間'])    
+    writer.writerow(['標竿問題', '機台數', '任務數', '最佳解', '運算時間','迴圈次數','已知最佳解','達到已知最佳解迴圈數'])
     for i in range(len(result)):
         writer.writerow(result[i])
     
     writer.writerow([])
     writer.writerow([])
     #紀錄參數
-    writer.writerow(['iteration', 'NUM_CHROME', '交配率', '突變率'])
-    writer.writerow([iteration, NUM_CHROME, Pc, Pm])
+    writer.writerow([ 'NUM_CHROME', '交配率', '突變率'])
