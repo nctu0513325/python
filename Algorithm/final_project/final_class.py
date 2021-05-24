@@ -115,7 +115,7 @@ def replace(p, p_fit, a, a_fit):            # 適者生存
     return b[:NUM_CHROME], list(b_fit[:NUM_CHROME]) # 回傳 NUM_CHROME 個為新的一個世代
 
 # 載入標竿問題
-FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
@@ -162,10 +162,10 @@ for f in range(len(FileName)):
     Proc_Time                       
     Setup_Time                     
     if (Num_of_Job <50):            #迴圈個數
-        iteration = 300
+        iteration = 1500
     else:
-        iteration = 100
-    NUM_CHROME = 80                    #染色體個數
+        iteration = 500
+    NUM_CHROME = 100                    #染色體個數
     Pc = 0.5    					# 交配率 (代表共執行Pc*NUM_CHROME/2次交配)
     Pm = 0.5    					# 突變率 (代表共要執行Pm*NUM_CHROME*Num_of_Job次突變)
     
@@ -174,7 +174,8 @@ for f in range(len(FileName)):
     NUM_CROSSOVER_2 = NUM_CROSSOVER*2               # 上數的兩倍
     NUM_MUTATION = int(Pm * NUM_CHROME * Num_of_Job)   # 突變的次數
     
-    best_iteration = 0                          #紀錄多快達到已知最佳解
+    best_iteration = []                         #紀錄多快達到已知最佳解
+    first = 0
     #np.random.seed(0)
     
     #==========主程式==========
@@ -199,7 +200,9 @@ for f in range(len(FileName)):
         mean_output.append(np.average(pop_fit))
         
         if (-pop_fit[0] == Known_best):
-            best_iteration = i
+            best_iteration.append(i)
+    if (len(best_iteration) != 0):
+        first = best_iteration[0]
     print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
     stop = time.process_time()                                      #演算法結束
     

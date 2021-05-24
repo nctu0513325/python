@@ -20,12 +20,12 @@ def list_order(y):
 # 初始化群體
 def init_pop():
     pop = []
-    x = (Num_of_Machine-1)*Num_of_Job
+    x = (Num_of_Machine-1)* long
     for i in range(NUM_CHROME):
-        y = np.random.permutation(range(0,Num_of_Job))              #產生Num_of_job個數的排列
+        y = np.random.permutation(range(0,long))              #產生Num_of_job個數的排列
         y = np.pad(y, (0,x), 'constant', constant_values=(0,-1))    #塞入-1當作作業停止
         np.random.shuffle(y)                                        #打亂順序
-        y = y.reshape((Num_of_Machine, Num_of_Job))
+        y = y.reshape((Num_of_Machine, long))
         for j in range(len(y)):
             list_order(y[j])
         pop.append(y)
@@ -35,7 +35,7 @@ def init_pop():
 def fitfunction(x):
     makesspan = np.zeros(Num_of_Machine)
     for i in range(len(x)):
-        for j in range(Num_of_Job):
+        for j in range(len(x[i])):
             if (x[i][j] == -1):
                 break
             elif (x[i][j] != -1): 
@@ -93,13 +93,11 @@ def local_search(job, child, mach):
     return child
                 
 # local search enhanced -選子代方式
-def local_search_enhanced(pop, pop_fit, Num_pressure):
+def local_search_enhanced( parent_1, parent_2):
     a = []    
     for i in range(NUM_CROSSOVER):
-        child_1 = list(np.ones((Num_of_Machine, Num_of_Job)) * -1)
-        child_2 = list(np.ones((Num_of_Machine, Num_of_Job)) * -1)
-        parent_1 = select(pop, pop_fit, Num_pressure)
-        parent_2 = select(pop, pop_fit, Num_pressure)
+        child_1 = list(np.ones((Num_of_Machine, long)) * -1)
+        child_2 = list(np.ones((Num_of_Machine, long)) * -1)
 
         #決定child_1
         for j in range(Num_of_Machine):
@@ -116,7 +114,7 @@ def local_search_enhanced(pop, pop_fit, Num_pressure):
             x = []
             y = []
             #檢查相對應機台有哪些工作沒有的
-            for m in range(Num_of_Job):
+            for m in range(long):
                 if (parent_2[j][m] not in child_1[j]):
                     x.append(parent_2[j][m])
                 if (parent_2[j][m] not in child_2[j]):
@@ -151,7 +149,7 @@ def replace(p, p_fit, a, a_fit):            # 適者生存
 
 # ==========開始實作==========
 # 載入標竿問題
-FileName = os.listdir (r"G:\NCTU\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
+FileName = os.listdir (r"D:\NCTU\fifth grade\python\Algorithm\final_project\Instence")    #將標竿問題檔案名稱存成一陣列
 result = []
 # 將FileName裡的資料都跑過一遍
 for f in range(len(FileName)):
@@ -161,13 +159,13 @@ for f in range(len(FileName)):
     with open("Instence/" + instance) as ins:
         data = ins.readlines()          #txt檔里全部數據
         NUM = data[0].split()
-        Num_of_Job = int(NUM[0])         #紀錄JOB數
+        Num_of_Job= int(NUM[0])         #紀錄JOB數
         Num_of_Machine = int(NUM[1])     #紀錄machine數
         Known_best = int(NUM[2])
         Proc_Time = np.zeros((Num_of_Job, Num_of_Machine))      #initialize 
         Setup_Time = np.zeros((Num_of_Machine, Num_of_Job, Num_of_Job))      #initialize 
         # processtime 資料
-        for j in range(2,Num_of_Job + 2):                        
+        for j in range(2,Num_of_Job+ 2):                        
             data[j] = re.sub('\n', '',data[j])                  #process time資料
             item = []
             item = data[j].split('\t')
@@ -192,11 +190,12 @@ for f in range(len(FileName)):
 
     #========參數設定========
     Num_of_Machine                #機台個數
-    Num_of_Job                    #JOB數
+    Num_of_Job              #JOB數
+    long = int(Num_of_Job*2/3)
     Proc_Time                       
     Setup_Time                     
     
-    if (Num_of_Job <50):            #迴圈個數
+    if (Num_of_Job<50):            #迴圈個數
         iteration = 1500
     else:
         iteration = 500
@@ -226,7 +225,9 @@ for f in range(len(FileName)):
     mean_output.append(np.average(pop_fit))
     
     for i in range(iteration):
-        offspring = local_search_enhanced(pop, pop_fit, Num_pressure)
+        parent_1 = select(pop, pop_fit, Num_pressure)
+        parent_2 = select(pop, pop_fit, Num_pressure)
+        offspring = local_search_enhanced(parent_1,parent_2)        
         mutation(offspring)
         offspring_fit = evaluatePop(offspring)
         pop, pop_fit = replace(pop, pop_fit, offspring, offspring_fit)
@@ -239,7 +240,7 @@ for f in range(len(FileName)):
     print('iteration %d: x = %s, y = %d'	%(i, pop[0], -pop_fit[0]))     # fit 改負的
     stop = time.process_time()                                      #演算法結束
     
-    # 將此標竿問題結果存起來 格式==>[標竿問題名稱, 機台數, 任務數, 解, 已知最佳解, 運算時間]
+    # 將此標竿問題結果存起來 格式==>['標竿問題', '機台數', '任務數', '運算時間','迴圈次數','最佳解', '已知最佳解','達到已知最佳解迴圈數']
     the_result = [ instance, Num_of_Machine, Num_of_Job, stop-start, iteration, -pop_fit[0], Known_best, first]
     result.append(the_result)
 
